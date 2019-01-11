@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Mvc_CommentingChat.Models.Comment>
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+
+}
+
+<h2 class="text-info text-center">WelCome to the ChatRoom!</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-lg-offset-8 col-md-offset-8 col-sm-offset-8 ">
+            @if (Session["UserImg"].ToString().Length > 0)
+            {
+                <a href="#">
+                    <img class="media-object img-thumbnail" src="@Url.Content(Session["UserImg"].ToString())" alt="..." width="40" height="50" >
+                </a>
+            }
+            else
+            {
+
+            }
+            @using (Html.BeginForm("PostComment", "ChatRoom", FormMethod.Post))
+            {
+                <input type="text" name="CommentText" placeholder="Enter Comment" style="width:100%; height:100px; font-size:20px" /><br />
+                <input type="submit" value="Comment" class="btn btn-primary" style="margin-top:10px" />
+            }
+        </div>
+    </div>
+</div>
+<div style="margin-top:20px">
+    <table class="table table-hover">
+
+        @foreach (var comments in Model)
+        {
+            <tr>
+                <td>
+                    <div class="media">
+                        <div class="media-left media-middle">
+                            @if (comments.User.ImgUrl.Length > 0)
+                            {
+                                <a href="#">
+                                    <img class="media-object img-thumbnail" src="@Url.Content(comments.User.ImgUrl)" alt="..." width="50" height="100">
+                                </a>
+                            }
+                            else
+                            {
+                               
+                            }
+
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">@comments.User.Name</h4>
+                            @Html.DisplayFor(x => comments.Text) <span style="margin-left:17px"> @comments.createdTime</span>
+                        </div>
+                    </div>
+                
+
+                    @foreach (var replay in comments.Replies)
+                    {
+                     
+
+                        <div class="media">
+                            <div class="media-left media-middle">
+                                @if (replay.User.ImgUrl.Length > 0)
+                                {
+                                    <a href="#">
+                                        <img class="media-object img-thumbnail" src="@Url.Content(replay.User.ImgUrl)" alt="..." width="50" height="100">
+                                    </a>
+                                }
+                                else
+                                {
+
+                                }
+                            </div>
+                            <div class="media-body">
+                                <h4 class="media-heading">@replay.User.Name</h4>
+                                @Html.DisplayFor(x => replay.Text) <span style="margin-left:17px"> @replay.createdTime</span>
+                            </div>
+                        </div>
+                    }
+
+                    <br />
+
+                    @using (Html.BeginForm("ReplayComment", "ChatRoom", FormMethod.Post))
+                    {
+                        <input type="hidden" value="@comments.Id" name="CommentID" />
+
+                        <input name="Replay" type="text" style="width:100%; height:100px; font-size:20px" />
+                        <input type="submit" class="btn btn-info" value="Replay" />
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
